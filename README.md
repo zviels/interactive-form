@@ -15,7 +15,7 @@ I used only JavaScript to write this project.
 
 ## My Development Process
 
-- [x] **25/02/2021:** Uploaded starter files.
-- [x] **25/02/2021:** Added a JS file.
-- [x] **25/02/2021:** On page load, I made the cursor appear in the "Name" field.
+- **25/02/2021:** Uploaded starter files.
+- **25/02/2021:** On page load, I made the cursor appear in the "Name" field.
+- **25/02/2021:** Made the job role text field appear only when the user selects "Other" from the Job Role menu.
 
