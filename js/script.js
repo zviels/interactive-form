@@ -44,11 +44,12 @@ const addRoleMenuListener = () => {
 
 const addDesignMenuListener = () => {
 
+    const options = color.children;
+
     // Hide
+    // This Function Hides Irrelevant Colors.
 
     const hide = (theme) => {
-
-        const options = color.children;
         
         // Skip The First Index, Since There Is No Real Option There.
 
@@ -64,11 +65,24 @@ const addDesignMenuListener = () => {
 
     }
 
+    // The 'changeSelection' Function Changes The Default Selected Option Based On The User's Choice.
+
+    const changeSelection = (theme) => {
+
+        options[0].selected = false;
+
+        const relevantColors = document.querySelectorAll(`[data-theme="${theme}"]`);
+        relevantColors[0].selected = true;
+
+    }
+
     // Call The 'hide' Function Whenever A Theme Is Selected
 
     design.addEventListener('change', (e) => {
 
         const theme = e.target.value;
+
+        changeSelection(theme);
         
         switch(theme) {
 
