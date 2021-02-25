@@ -18,4 +18,5 @@ I used only JavaScript to write this project.
 - **25/02/2021:** Uploaded starter files.
 - **25/02/2021:** On page load, I made the cursor appear in the "Name" field.
 - **25/02/2021:** Made the job role text field appear only when the user selects "Other" from the Job Role menu.
+- **25/02/2021:** Disabled the "Color" drop down menu when the page loads. It becomes enabled again only when a "Theme" is selected. The drop down menu also updates correctly when a T-Shirt theme is changed.
 

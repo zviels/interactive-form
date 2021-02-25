@@ -6,16 +6,19 @@ const roleField = document.querySelector('#other-job-role');
 // Drop Down Menus
 
 const title = document.querySelector('#title');
+const color = document.querySelector('#color');
+const design = document.querySelector('#design');
 
 // Main Functions
 
-// Display
-// This Function Determines Whether A Certain Field Should Be Visible Or Not.
+// The 'display' Function Determines Whether A Certain Field Should Be Visible Or Not.
 
 const display = (field, displayValue) => field.style.display = displayValue;
 
-// AddRoleMenuListener
-// This Function Adds An Event Listener To The Title Element.
+// Listeners
+// These Functions Add An Event Listener To The Relevant Variables.
+
+// addRoleMenuListener
 
 const addRoleMenuListener = () => {
 
@@ -37,13 +40,65 @@ const addRoleMenuListener = () => {
 
 }
 
-// Run
+// addDesignMenuListener
+
+const addDesignMenuListener = () => {
+
+    // Hide
+
+    const hide = (theme) => {
+
+        const options = color.children;
+        
+        // Skip The First Index, Since There Is No Real Option There.
+
+        for (let i = 1; i < options.length; i ++)
+
+            // The Dataset Property Represents HTML Custom Data Attributes In JS.
+
+            if (options[i].dataset.theme === theme)
+                options[i].hidden = true;
+
+            else
+                options[i].hidden = false;    
+
+    }
+
+    // Call The 'hide' Function Whenever A Theme Is Selected
+
+    design.addEventListener('change', (e) => {
+
+        const theme = e.target.value;
+        
+        switch(theme) {
+
+            case 'js puns': hide("heart js");
+                            break;
+
+            case 'heart js': hide("js puns");
+                            break;
+
+        }
+
+        // Enable The Color Field
+
+        color.disabled = false;
+
+    });
+
+}
+
+// Activation Function
 
 const run = () => {
 
     nameField.focus();
+
     display(roleField, 'none');
     addRoleMenuListener();
+
+    color.disabled = true;
+    addDesignMenuListener();
 
 }
 
