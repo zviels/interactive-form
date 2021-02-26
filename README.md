@@ -27,3 +27,7 @@ I used only JavaScript to write this project.
 
 - Made the credit card section appear on page load. The "Credit Card" option is also selected in the payment field by default. In addition, the payment section updates correctly when the user changes the selected payment method in the drop down menu.
 - Added form validation. Form submissions use 'submit' event on the 'form' element. Form cannot be submitted until the "Name" field isn't blank, "Email" field contains a correctly formatted email address, and at least one activity has been selected. In addition, if "Credit Card" is the selected payment option, the three credit card fields accept only numbers (a 13 to 16-digit credit card number, a 5-digit zip code and a 3-digit CVV value).
+
+## Real Time Validation & Conditional Error Messages
+
+- The "Name" field cannot be blank, and its value should contain letters only.

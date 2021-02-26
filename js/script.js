@@ -126,7 +126,7 @@ const setPaymentMethod = (value) => {
 
 // isValidName
 
-const isValidName = (name) => /^\S+$/.test(name);
+const isValidName = () => /^[A-Z]+$/i.test(nameField.value);
 
 // isValidEmail
 
@@ -158,6 +158,70 @@ const isValidCreditCard = () => {
 
 // Listeners
 // These Functions Add An Event Listener To The Relevant Variables.
+
+// Real Time Error Messages
+// These Functions Will Only Display A Hint If A Value In A Field Is Invalid.
+
+// nameValidator
+
+const nameValidator = (hint) => {
+
+    const nameStartsWithLetter = /^[A-Z]$/.test(nameField.value[0]);
+
+    if (nameField.value == '')
+        hint.textContent = 'Name Field Cannot Be Blank.';
+
+    else if (!(isValidName()))
+        hint.textContent = 'Name Can Contain Letters Only.';
+
+}
+
+// Handler
+
+const handler = (id, isValid, value, validator) => {
+
+    const hint = document.querySelector(id);
+
+    if (!(isValid(value))) {
+
+        validator(hint);
+        display(hint, 'block');
+
+    }
+        
+    else
+        display(hint, '');    
+
+}
+
+// addFieldListeners
+
+const addFieldListeners = () => {
+
+    const events = ['focus', 'keyup'];
+
+    // addNameFieldListeners
+
+    const addNameFieldListeners = () => {
+
+        for (const event of events)
+            nameField.addEventListener(event, () => handler('#name-hint', isValidName, nameField.value, nameValidator));
+
+    }
+
+    // addEmailListener
+
+    const addEmailListener = () => {
+
+    }
+
+    // Actually Create The Event Listeners.
+
+    addNameFieldListeners();
+
+}
+
+// Other Listeners
 
 // addRoleMenuListener
 
@@ -275,7 +339,7 @@ const addPaymentMethodBoxListener = payment.addEventListener('change', (e) => se
 
 const addFormListener = form.addEventListener('submit', (e) => {
 
-    if (!(isValidName(nameField.value)))
+    if (!(isValidName()))
         e.preventDefault();
 
     else if (!(isValidEmail(email.value)))
@@ -293,6 +357,7 @@ const addFormListener = form.addEventListener('submit', (e) => {
 
 const run = () => {
 
+    addFieldListeners();
     nameField.focus();
 
     display(roleField, 'none');
