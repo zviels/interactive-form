@@ -8,10 +8,14 @@ const roleField = document.querySelector('#other-job-role');
 const title = document.querySelector('#title');
 const color = document.querySelector('#color');
 const design = document.querySelector('#design');
+const payment = document.querySelector('#payment');
 
 // Sections
 
 const activities = document.querySelector('#activities');
+const creditCard = document.querySelector('#credit-card');
+const paypal = document.querySelector('#paypal');
+const bitcoin = document.querySelector('#bitcoin');
 
 // Checkboxes
 
@@ -19,9 +23,9 @@ const checkboxes = document.querySelectorAll('input[type="checkbox"]');
 
 // Main Functions
 
-// The 'display' Function Determines Whether A Certain Field Should Be Visible Or Not.
+// The 'display' Function Determines Whether A Certain Element Should Be Visible Or Not.
 
-const display = (field, displayValue) => field.style.display = displayValue;
+const display = (element, displayValue) => element.style.display = displayValue;
 
 // displayTotalCost
 
@@ -47,52 +51,62 @@ const disableActivitiesExcept = (activity) => {
     // See When The Activity Takes Place, And Whether It Was Checked Or Unchecked.
 
     const activityTime = activity.dataset.dayAndTime;
-    const checked = activity.checked;
+    const activityChecked = activity.checked;
 
-    // disableActivites
-    // This Function Disables Activities In Which The User Can Not Participate.
+    for (const checkbox of checkboxes) {
 
-    const disableActivites = () => {
+        // Disable Activities If The User Checked An Activity, And Clear Relevant Disabled Activities If The User Unchecked An Activity.
 
-        for (const checkbox of checkboxes) {
+        if (activityChecked && (!(checkbox.checked)) && checkbox.dataset.dayAndTime === activityTime) {
 
-            if ((!(checkbox.checked)) && checkbox.dataset.dayAndTime === activityTime) {
+            // Disable Activities In Which The User Can Not Participate.
 
-                checkbox.disabled = true;
-                checkbox.parentNode.className = 'disabled';
-
-            }
+            checkbox.disabled = true;
+            checkbox.parentNode.className = 'disabled';
 
         }
 
-    }
+        else if (checkbox.dataset.dayAndTime === activityTime) {
 
-    // clearDisabledActivities
-    // This Function Clears All Disabled Activities That Take Place At The Same Time.
+            // Clear All Disabled Activities That Take Place At The Same Time
 
-    const clearDisabledActivities = () => {
-
-        for (const checkbox of checkboxes) {
-
-            if (checkbox.dataset.dayAndTime === activityTime) {
-
-                checkbox.disabled = false;
-                checkbox.parentNode.className = '';
-
-            }
+            checkbox.disabled = false;
+            checkbox.parentNode.className = '';
 
         }
         
     }
-
-    // Disable Activities If The User Checked An Activity, And Clear Relevant Disabled Activities If The User Unchecked An Activity.
-
-    if (checked) 
-        disableActivites();
-
-    else
-        clearDisabledActivities();
          
+}
+
+// setPaymentMethod
+// This Function Sets The Payment Method According To The Provided Value.
+
+const setPaymentMethod = (value) => {
+
+    const paymentOptions = payment.children;
+    const paymentMethods = [creditCard, paypal, bitcoin];
+
+    // Update The HTML So It Would Display Which Payment Method The User Has Chosen.
+
+    for (const paymentOption of paymentOptions)
+
+        if (paymentOption.value === value) 
+            paymentOption.setAttribute('selected', '');
+
+        else if (paymentOption.hasAttribute('selected'))
+            paymentOption.removeAttribute('selected');        
+
+    // Show The Relevant Section For The Chosen Payment Method, And Hide All The Other Sections.
+
+    for (const paymentMethod of paymentMethods)
+
+        if (paymentMethod.id === value)
+            display(paymentMethod, '');
+        
+        else
+            display(paymentMethod, 'none');    
+
 }
 
 // Listeners
@@ -205,6 +219,11 @@ const addActivitiesBoxListener = () => activities.addEventListener('change', (e)
     
 });
 
+// addPaymentMethodBoxListener
+// The Value Of The Selected Option Is Sent As An Argument To The 'setPaymentMethod' Function.
+
+const addPaymentMethodBoxListener = payment.addEventListener('change', (e) => setPaymentMethod(e.target.value));
+
 // Activation Function
 
 const run = () => {
@@ -218,6 +237,8 @@ const run = () => {
     addDesignMenuListener();
 
     addActivitiesBoxListener();
+
+    setPaymentMethod('credit-card');
 
 }
 

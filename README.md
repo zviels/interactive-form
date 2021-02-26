@@ -22,3 +22,7 @@ I used only JavaScript to write this project.
 - Made the job role text field appear only when the user selects "Other" from the Job Role menu.
 - Disabled the "Color" drop down menu when the page loads. It becomes enabled again only when a "Theme" is selected. The drop down menu and the selected option also update correctly when a T-Shirt theme is changed.
 - Displayed the total cost of selected activites. The total cost correctly updates in the form when the user selects or deselects activities. I also prevented the user from selecting two activities that take place at the same day and time!
+
+## 26/02/2021
+
+- Made the credit card section appear on page load. The "Credit Card" option is also selected in the payment field by default. In addition, the payment section updates correctly when the user changes the selected payment method in the drop down menu.
