@@ -1,7 +1,12 @@
+// Form
+
+const form = document.querySelector('form');
+
 // Fields
 
 const nameField = document.querySelector('#name');
 const roleField = document.querySelector('#other-job-role');
+const email = document.querySelector('#email');
 
 // Drop Down Menus
 
@@ -20,6 +25,10 @@ const bitcoin = document.querySelector('#bitcoin');
 // Checkboxes
 
 const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+
+// Other Variables
+
+let selectedPaymentMethod;
 
 // Main Functions
 
@@ -91,9 +100,13 @@ const setPaymentMethod = (value) => {
 
     for (const paymentOption of paymentOptions)
 
-        if (paymentOption.value === value) 
-            paymentOption.setAttribute('selected', '');
+        if (paymentOption.value === value) {
 
+            paymentOption.setAttribute('selected', '');
+            selectedPaymentMethod = paymentOption.value;
+
+        }
+            
         else if (paymentOption.hasAttribute('selected'))
             paymentOption.removeAttribute('selected');        
 
@@ -107,6 +120,40 @@ const setPaymentMethod = (value) => {
         else
             display(paymentMethod, 'none');    
 
+}
+
+// Validations
+
+// isValidName
+
+const isValidName = (name) => /^\S+$/.test(name);
+
+// isValidEmail
+
+const isValidEmail = (email) => /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.(com|net)/i.test(email);
+
+// isActivityChecked
+
+const isActivityChecked = () => {
+
+    for (const checkbox of checkboxes)
+        if (checkbox.checked)
+            return true;
+
+    return false;
+
+}
+
+// isValidCreditCard
+
+const isValidCreditCard = () => {
+
+    const cardNumber = document.querySelector('#cc-num');
+    const zipCode = document.querySelector('#zip');
+    const cvv = document.querySelector('#cvv');
+
+    return /^\d{13,16}$/.test(cardNumber.value) && /^\d{5}$/.test(zipCode.value) && /^\d{3}$/.test(cvv.value);
+    
 }
 
 // Listeners
@@ -223,6 +270,24 @@ const addActivitiesBoxListener = () => activities.addEventListener('change', (e)
 // The Value Of The Selected Option Is Sent As An Argument To The 'setPaymentMethod' Function.
 
 const addPaymentMethodBoxListener = payment.addEventListener('change', (e) => setPaymentMethod(e.target.value));
+
+// addFormListener
+
+const addFormListener = form.addEventListener('submit', (e) => {
+
+    if (!(isValidName(nameField.value)))
+        e.preventDefault();
+
+    else if (!(isValidEmail(email.value)))
+        e.preventDefault();
+    
+    else if (!(isActivityChecked()))
+        e.preventDefault();
+    
+    else if (selectedPaymentMethod === 'credit-card' && (!(isValidCreditCard())))
+        e.preventDefault();
+    
+});
 
 // Activation Function
 
