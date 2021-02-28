@@ -8,12 +8,20 @@ const nameField = document.querySelector('#name');
 const roleField = document.querySelector('#other-job-role');
 const email = document.querySelector('#email');
 
+// Credit Card Fields
+
+const cardNumber = document.querySelector('#cc-num');
+const zipCode = document.querySelector('#zip');
+const cvv = document.querySelector('#cvv');
+
 // Drop Down Menus
 
 const title = document.querySelector('#title');
 const color = document.querySelector('#color');
 const design = document.querySelector('#design');
 const payment = document.querySelector('#payment');
+const expirationMonth = document.querySelector('#exp-month');
+const expirationYear = document.querySelector('#exp-year');
 
 // Sections
 
@@ -122,15 +130,16 @@ const setPaymentMethod = (value) => {
 
 }
 
-// Validations
+// Validation Functions
+// These Functions Determine If The Information That The Form Contains Is Valid Or Not.
 
 // isValidName
 
-const isValidName = () => /^[A-Z]+$/i.test(nameField.value);
+const isNameValid = () => /^[A-Z]+$/i.test(nameField.value);
 
 // isValidEmail
 
-const isValidEmail = (email) => /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.(com|net)/i.test(email);
+const isEmailValid = () => /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.(com|net)$/i.test(email.value);
 
 // isActivityChecked
 
@@ -144,47 +153,134 @@ const isActivityChecked = () => {
 
 }
 
-// isValidCreditCard
+// isCreditCardNumberValid
 
-const isValidCreditCard = () => {
+const isCreditCardNumberValid = () =>/^\d{13,16}$/.test(cardNumber.value);
 
-    const cardNumber = document.querySelector('#cc-num');
-    const zipCode = document.querySelector('#zip');
-    const cvv = document.querySelector('#cvv');
+// isZipCodeValid
 
-    return /^\d{13,16}$/.test(cardNumber.value) && /^\d{5}$/.test(zipCode.value) && /^\d{3}$/.test(cvv.value);
-    
+const isZipCodeValid = () => /^\d{5}$/.test(zipCode.value);
+
+// isCvvValid
+
+const isCvvValid = () => /^\d{3}$/.test(cvv.value);
+
+// isExpirationMonthValid
+
+const isExpirationMonthValid = () => expirationMonth.value !== 'Select Date';
+
+// isExpirationYearValid
+
+const isExpirationYearValid = () => expirationYear.value !== 'Select Year';
+
+// isExpirationDateValid
+
+const isExpirationDateValid = () => {
+
+    const expirationDate = new Date(parseInt(expirationYear.value), parseInt(expirationMonth.value) - 1);
+    const today = new Date();
+
+    return expirationDate > today;
+
 }
 
-// Listeners
-// These Functions Add An Event Listener To The Relevant Variables.
-
 // Real Time Error Messages
-// These Functions Will Only Display A Hint If A Value In A Field Is Invalid.
+// These Functions Set Error Messages That Appear In Real Time.
 
-// nameValidator
+// setNameError
 
-const nameValidator = (hint) => {
-
-    const nameStartsWithLetter = /^[A-Z]$/.test(nameField.value[0]);
+const setNameError = (hint) => {
 
     if (nameField.value == '')
         hint.textContent = 'Name Field Cannot Be Blank.';
 
-    else if (!(isValidName()))
+    else
         hint.textContent = 'Name Can Contain Letters Only.';
 
 }
 
-// Handler
+// setEmailError
 
-const handler = (id, isValid, value, validator) => {
+const setEmailError = (hint) => {    
+
+    if (email.value == '')
+        hint.textContent = 'Email Address Must Be Provided.';
+    
+    else if (!(/^([A-Z0-9._%+-]+)(@)/i.test(email.value)))
+        hint.textContent = 'Email Address Must Start With A Valid Recipient Name, Followed By An @ Sign. Recipient Name Can Contain Only Letters, Numbers, Dots (.), Underscores (_), Percentages (%), Pluses (+) And Minuses (-).';
+    
+    else
+        hint.textContent = 'Email Address Must Include A Valid Domain Name, Followed By A Top Level Domain (.Com Or .Net). Domain Name Can Contain Only Letters, Numbers, Dots (.) And Hyphens (-).';
+
+}
+
+// setActivityError
+
+const setActivityError = (hint) => hint.textContent = 'At Least One Activity Has To Be Checked.';
+
+// setCardNumberError
+
+const setCardNumberError = (hint) => {
+
+    if (cardNumber.value === '')
+        hint.textContent = 'Credit Card Number Must Be Provided.';
+
+    else
+        hint.textContent = 'Credit Card Number Must Be Between 13 And 16 Digits.';
+    
+}
+
+// SetZipCodeError
+
+const setZipCodeError = (hint) => {
+
+    if (zipCode.value === '')
+        hint.textContent = 'Zip Code Must Be Provided.';
+
+    else
+        hint.textContent = 'Zip Code Must Include Exactly 5 Digits.';
+    
+}
+
+// setCvvError
+
+const setCvvError = (hint) => {
+
+    if (cvv.value === '')
+        hint.textContent = 'CVV Must Be Provided.';
+
+    else
+        hint.textContent = 'CVV Must Include Exactly 3 Digits.';
+    
+}
+
+// setExpirationMonthError
+
+const setExpirationMonthError = (hint) => hint.textContent = 'Expiration Month Must Be Specified.';
+
+// setExpirationYearError
+
+const setExpirationYearError = (hint) => hint.textContent = 'Expiration Year Must Be Specified.';
+
+// setExpirationDateError
+
+const setExpirationDateError = (hint) => {
+    
+    if (isExpirationMonthValid() && isExpirationYearValid())
+        hint.textContent = 'Expiration Date Must Be At Least One Month Later Than Today.';
+
+}
+
+// errorHandler
+// This Function Displays An Error Message Based On The Arguments It Receives.
+
+const errorHandler = (id, isValid, setError) => {
 
     const hint = document.querySelector(id);
 
-    if (!(isValid(value))) {
+    if ((!(isValid)) || (!(isValid()))) {
 
-        validator(hint);
+        setError(hint);
         display(hint, 'block');
 
     }
@@ -193,6 +289,9 @@ const handler = (id, isValid, value, validator) => {
         display(hint, '');    
 
 }
+
+// Listeners
+// These Functions Add An Event Listener To The Relevant Variables.
 
 // addFieldListeners
 
@@ -205,23 +304,60 @@ const addFieldListeners = () => {
     const addNameFieldListeners = () => {
 
         for (const event of events)
-            nameField.addEventListener(event, () => handler('#name-hint', isValidName, nameField.value, nameValidator));
+            nameField.addEventListener(event, () => errorHandler('#name-hint', isNameValid, setNameError));
 
     }
 
     // addEmailListener
 
-    const addEmailListener = () => {
+    const addEmailListeners = () => {
+
+        for (const event of events)
+            email.addEventListener(event, () => errorHandler('#email-hint', isEmailValid, setEmailError));
+
+    }
+
+    // addCardNumberListener
+
+    const addCardNumberListener = () => {
+
+        for (const event of events)
+            cardNumber.addEventListener(event, () => errorHandler('#cc-hint', isCreditCardNumberValid, setCardNumberError));
+
+    }
+
+    // addZipCodeListener
+
+    const addZipCodeListener = () => {
+
+        for (const event of events)
+            zipCode.addEventListener(event, () => errorHandler('#zip-hint', isZipCodeValid, setZipCodeError));
+
+    }
+
+    // addCvvListener
+
+    const addCvvListener = () => {
+
+        for (const event of events)
+            cvv.addEventListener(event, () => errorHandler('#cvv-hint', isCvvValid, setCvvError));
 
     }
 
     // Actually Create The Event Listeners.
 
     addNameFieldListeners();
+    addEmailListeners();
+
+    addCardNumberListener();
+    addZipCodeListener();
+    addCvvListener();
 
 }
 
-// Other Listeners
+// lookForUncheckedActivities
+
+const lookForUncheckedActivities = () => activities.addEventListener('mouseleave', () => errorHandler('#activities-hint', isActivityChecked, setActivityError));
 
 // addRoleMenuListener
 
@@ -327,6 +463,10 @@ const addActivitiesBoxListener = () => activities.addEventListener('change', (e)
 
     displayTotalCost();
     disableActivitiesExcept(activity);
+
+    // Look For Unchecked Activities, And Display An Error Message If Needed.
+
+    errorHandler('#activities-hint', isActivityChecked, setActivityError);
     
 });
 
@@ -335,21 +475,69 @@ const addActivitiesBoxListener = () => activities.addEventListener('change', (e)
 
 const addPaymentMethodBoxListener = payment.addEventListener('change', (e) => setPaymentMethod(e.target.value));
 
+// addExpirationMonthListener
+
+const addExpirationMonthListener = expirationMonth.addEventListener('change', () => {
+    
+    errorHandler('#exp-month-hint', isExpirationMonthValid, setExpirationMonthError);
+    errorHandler('#exp-date-hint', isExpirationDateValid, setExpirationDateError);
+
+});
+
+// addExpirationYearListener
+
+const addExpirationYearListener = expirationYear.addEventListener('change', () => {
+    
+    errorHandler('#exp-year-hint', isExpirationYearValid, setExpirationYearError);
+    errorHandler('#exp-date-hint', isExpirationDateValid, setExpirationDateError);
+
+});
+
 // addFormListener
 
 const addFormListener = form.addEventListener('submit', (e) => {
 
-    if (!(isValidName()))
-        e.preventDefault();
+    // handleInvalidInformation
 
-    else if (!(isValidEmail(email.value)))
+    const handleInvalidInformation = (id, setError) => {
+
+        const isValid = false;
+
         e.preventDefault();
+        errorHandler(id, isValid, setError);
+
+    }
+
+    // Look For Invalid Information. If Such Information Exists - Handle It.
+
+    if (!(isNameValid()))
+        handleInvalidInformation('#name-hint', setNameError);
+
+    else if (!(isEmailValid()))
+        handleInvalidInformation('#email-hint', setEmailError);
     
     else if (!(isActivityChecked()))
-        e.preventDefault();
+        handleInvalidInformation('#activities-hint', setActivityError);
     
-    else if (selectedPaymentMethod === 'credit-card' && (!(isValidCreditCard())))
-        e.preventDefault();
+    else if (selectedPaymentMethod === 'credit-card')
+
+        if (!(isExpirationMonthValid()))
+            handleInvalidInformation('#exp-month-hint', setExpirationMonthError);
+
+        else if (!(isExpirationYearValid()))
+            handleInvalidInformation('#exp-year-hint', setExpirationYearError);
+            
+        else if (!(isExpirationDateValid()))
+            handleInvalidInformation('#exp-date-hint', setExpirationDateError);
+
+        else if (!(isCreditCardNumberValid()))
+            handleInvalidInformation('#cc-hint', setCardNumberError);
+
+        else if (!(isZipCodeValid()))
+            handleInvalidInformation('#zip-hint', setZipCodeError);
+            
+        else if (!(isCvvValid()))
+            handleInvalidInformation('#cvv-hint', setCvvError); 
     
 });
 
@@ -367,6 +555,7 @@ const run = () => {
     addDesignMenuListener();
 
     addActivitiesBoxListener();
+    lookForUncheckedActivities();
 
     setPaymentMethod('credit-card');
 
