@@ -34,6 +34,7 @@ I used only JavaScript to write this project.
 - Added conditional error messages to most required fields.
 - Made the "Expiration Month" and "Expiration Year" fields required.
 - Made the error messages appear when a user tries to submit the form with invalid or incomplete information.
+- Added an obvious 'focus' state when tabbing through the activities. I used the "focus" CSS class for this.
 
 ## Real Time Validation & Conditional Error Messages
 

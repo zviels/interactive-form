@@ -355,10 +355,6 @@ const addFieldListeners = () => {
 
 }
 
-// lookForUncheckedActivities
-
-const lookForUncheckedActivities = () => activities.addEventListener('mouseleave', () => errorHandler('#activities-hint', isActivityChecked, setActivityError));
-
 // addRoleMenuListener
 
 const addRoleMenuListener = () => {
@@ -455,20 +451,72 @@ const addDesignMenuListener = () => {
 
 }
 
-// addActivitiesBoxListener
+// addActivitiesBoxListeners
 
-const addActivitiesBoxListener = () => activities.addEventListener('change', (e) => {
+const addActivitiesBoxListeners = () => {
+
+    // addChangeEventListener
+
+    const addChangeEventListener = () => {
+
+        activities.addEventListener('change', (e) => {
     
-    const activity = e.target;
+            const activity = e.target;
+        
+            displayTotalCost();
+            disableActivitiesExcept(activity);
+        
+            // Look For Unchecked Activities, And Display An Error Message If Needed.
+        
+            errorHandler('#activities-hint', isActivityChecked, setActivityError);
+            
+        });
 
-    displayTotalCost();
-    disableActivitiesExcept(activity);
+    }
 
-    // Look For Unchecked Activities, And Display An Error Message If Needed.
+    // activitiesErrorHandler
 
-    errorHandler('#activities-hint', isActivityChecked, setActivityError);
-    
-});
+    const activitiesErrorHandler = () => errorHandler('#activities-hint', isActivityChecked, setActivityError);
+
+    // addMouseleaveEventListener
+
+    const addMouseleaveEventListener = () => activities.addEventListener('mouseleave', () => activitiesErrorHandler());
+
+    // Actually Add The Event Listeners.
+
+    addChangeEventListener();
+    addMouseleaveEventListener();
+
+}
+
+// addCheckboxesListeners
+
+const addCheckboxesListeners = () => {
+
+    // addFocusEventListener
+
+    const addFocusEventListener = () => {
+
+        for (const checkbox of checkboxes)
+            checkbox.addEventListener('focus', (e) => e.target.parentNode.className = 'focus');
+
+    }
+
+    // addBlurEventListener
+
+    const addBlurEventListener = () => {
+
+        for (const checkbox of checkboxes)
+            checkbox.addEventListener('blur', (e) => e.target.parentNode.className = '');
+
+    }
+
+    // Actually Add The Event Listeners.
+
+    addFocusEventListener();
+    addBlurEventListener();
+
+}
 
 // addPaymentMethodBoxListener
 // The Value Of The Selected Option Is Sent As An Argument To The 'setPaymentMethod' Function.
@@ -554,8 +602,8 @@ const run = () => {
     color.disabled = true;
     addDesignMenuListener();
 
-    addActivitiesBoxListener();
-    lookForUncheckedActivities();
+    addActivitiesBoxListeners();
+    addCheckboxesListeners();
 
     setPaymentMethod('credit-card');
 
