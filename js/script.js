@@ -30,6 +30,11 @@ const creditCard = document.querySelector('#credit-card');
 const paypal = document.querySelector('#paypal');
 const bitcoin = document.querySelector('#bitcoin');
 
+// Activities
+
+const labels = activities.querySelectorAll('label');
+const legend = activities.firstElementChild;
+
 // Checkboxes
 
 const checkboxes = document.querySelectorAll('input[type="checkbox"]');
@@ -177,10 +182,16 @@ const isExpirationYearValid = () => expirationYear.value !== 'Select Year';
 
 const isExpirationDateValid = () => {
 
-    const expirationDate = new Date(parseInt(expirationYear.value), parseInt(expirationMonth.value) - 1);
-    const today = new Date();
+    if (isExpirationMonthValid() && isExpirationYearValid()) {
 
-    return expirationDate > today;
+        const expirationDate = new Date(parseInt(expirationYear.value), parseInt(expirationMonth.value) - 1);
+        const today = new Date();
+    
+        return expirationDate > today;
+
+    }
+
+    return true;
 
 }
 
@@ -214,9 +225,17 @@ const setEmailError = (hint) => {
 
 }
 
-// setActivityError
+// setActivitiesFeedback
 
-const setActivityError = (hint) => hint.textContent = 'At Least One Activity Has To Be Checked.';
+const setActivitiesFeedback = (hint, feedback) => {
+    
+    if (feedback)
+        hint.textContent = 'You\'re Good To Go!';
+
+    else    
+        hint.textContent = 'At Least One Activity Has To Be Checked.';
+
+}
 
 // setCardNumberError
 
@@ -230,7 +249,7 @@ const setCardNumberError = (hint) => {
     
 }
 
-// SetZipCodeError
+// setZipCodeError
 
 const setZipCodeError = (hint) => {
 
@@ -262,17 +281,35 @@ const setExpirationMonthError = (hint) => hint.textContent = 'Expiration Month M
 
 const setExpirationYearError = (hint) => hint.textContent = 'Expiration Year Must Be Specified.';
 
-// setExpirationDateError
+// setExpirationDateFeedback
 
-const setExpirationDateError = (hint) => {
+const setExpirationDateFeedback = (hint, feedback) => {
     
-    if (isExpirationMonthValid() && isExpirationYearValid())
+    if (!(feedback))
         hint.textContent = 'Expiration Date Must Be At Least One Month Later Than Today.';
+
+    else
+        hint.textContent = 'Expiration Date Is Looking Good!';    
 
 }
 
+// Auxiliary Functions 
+
+// setClassName
+// This Function Determines Which Class Should Be Added And Which Class Should Be Removed From A Given Element.
+
+const setClassName = (element, classToAdd, classToRemove) => {
+
+    element.classList.remove(classToRemove);
+    element.classList.add(classToAdd);
+
+}
+
+// Error Handlers
+// These Functions Show & Hide Relevant Error Messages.
+
 // errorHandler
-// This Function Displays An Error Message Based On The Arguments It Receives.
+// This Function Displays An Error Message That Refers To A Text Field Based On The Arguments It Receives.
 
 const errorHandler = (id, isValid, setError) => {
 
@@ -282,11 +319,156 @@ const errorHandler = (id, isValid, setError) => {
 
         setError(hint);
         display(hint, 'block');
-
+        setClassName(hint.parentNode, 'not-valid', 'valid');
+        
     }
         
-    else
-        display(hint, '');    
+    else {
+
+        display(hint, '');
+        setClassName(hint.parentNode, 'valid', 'not-valid');
+
+    }      
+
+}
+
+// activitiesErrorHandler
+// A Custom Error Handler For The Activities Section.
+
+const activitiesErrorHandler = () => {
+
+    // setBorderColor
+
+    const setBorderColor = (color) => {
+
+        for (label of labels)
+            label.style.borderColor = color;
+
+    }
+
+    // Actually Handle The Error.
+
+    const hint = document.querySelector('#activities-hint');
+    display(hint, 'block');
+
+    if (!(isActivityChecked())) {
+
+        legend.style.color = 'red';
+        setActivitiesFeedback(hint);
+        setBorderColor('red');
+        setClassName(hint, 'invalid-error-message', 'valid-message');
+
+    }
+
+    else {
+
+        legend.style.color = '';
+        setActivitiesFeedback(hint, true);
+        setBorderColor('');
+        setClassName(hint, 'valid-message', 'invalid-error-message');
+
+    }
+    
+}
+
+// expirationDateErrorHandler
+// An Error Handler For The Expiration Date.
+
+expirationDateErrorHandler = (id, isValid, setError) => {
+
+    // setBorderColor
+
+    const setBorderColor = (id, color) => {
+
+        if (id === '#exp-month-hint')
+            expirationMonth.style.borderColor = color;
+
+        else if (id === '#exp-year-hint')
+            expirationYear.style.borderColor = color;
+
+        else {
+
+            expirationMonth.style.borderColor = color;
+            expirationYear.style.borderColor = color;
+
+        }    
+
+    }
+
+    // setLabelColor
+
+    const setLabelColor = (id, color) => {
+
+        const monthLabel = document.querySelector('label[for="exp-month"]');
+        const yearLabel = document.querySelector('label[for="exp-year"]');
+
+        if (id === '#exp-month-hint')
+            monthLabel.style.color = color;
+
+        else if (id === '#exp-year-hint')
+            yearLabel.style.color = color;
+            
+        else {
+
+            monthLabel.style.color = color;
+            yearLabel.style.color = color;
+
+        }    
+
+
+    }
+
+    // validateExpirationDate
+
+    const validateExpirationDate = () => {
+
+        if (isExpirationMonthValid() && isExpirationYearValid()) {
+
+            const hint = document.querySelector('#exp-date-hint');
+            display(hint, 'block');
+    
+            if (!(isExpirationDateValid())) {
+    
+                setExpirationDateFeedback(hint);
+                setBorderColor('#exp-date-hint', 'red');
+                setLabelColor('#exp-date-hint', 'red');
+                hint.style.color = 'red';
+    
+            }
+    
+            else {
+    
+                setExpirationDateFeedback(hint, true);
+                setBorderColor('#exp-date-hint', 'green');
+                setLabelColor('#exp-date-hint', '');
+                hint.style.color = 'green';   
+    
+            }
+
+        }
+            
+    }
+
+    const hint = document.querySelector(id);
+
+    if ((!(isValid)) || (!(isValid()))) {
+
+        setError(hint);
+        display(hint, 'block');
+        setBorderColor(id, 'red');
+        setLabelColor(id, 'red');
+
+    }
+
+    else {
+
+        display(hint, '');
+        setBorderColor(id, 'green');
+        setLabelColor(id, '');
+
+    }
+
+    validateExpirationDate();
 
 }
 
@@ -297,7 +479,7 @@ const errorHandler = (id, isValid, setError) => {
 
 const addFieldListeners = () => {
 
-    const events = ['focus', 'keyup'];
+    const events = ['blur', 'input'];
 
     // addNameFieldListeners
 
@@ -308,7 +490,7 @@ const addFieldListeners = () => {
 
     }
 
-    // addEmailListener
+    // addEmailListeners
 
     const addEmailListeners = () => {
 
@@ -331,7 +513,8 @@ const addFieldListeners = () => {
     const addZipCodeListener = () => {
 
         for (const event of events)
-            zipCode.addEventListener(event, () => errorHandler('#zip-hint', isZipCodeValid, setZipCodeError));
+            zipCode.addEventListener(event, () => 
+                    errorHandler('#zip-hint', isZipCodeValid, setZipCodeError));
 
     }
 
@@ -468,24 +651,15 @@ const addActivitiesBoxListeners = () => {
         
             // Look For Unchecked Activities, And Display An Error Message If Needed.
         
-            errorHandler('#activities-hint', isActivityChecked, setActivityError);
+            activitiesErrorHandler();
             
         });
 
     }
 
-    // activitiesErrorHandler
-
-    const activitiesErrorHandler = () => errorHandler('#activities-hint', isActivityChecked, setActivityError);
-
-    // addMouseleaveEventListener
-
-    const addMouseleaveEventListener = () => activities.addEventListener('mouseleave', () => activitiesErrorHandler());
-
     // Actually Add The Event Listeners.
 
     addChangeEventListener();
-    addMouseleaveEventListener();
 
 }
 
@@ -507,7 +681,14 @@ const addCheckboxesListeners = () => {
     const addBlurEventListener = () => {
 
         for (const checkbox of checkboxes)
-            checkbox.addEventListener('blur', (e) => e.target.parentNode.className = '');
+            checkbox.addEventListener('blur', (e) => {
+                
+                e.target.parentNode.className = ''
+
+                if (checkbox.name === 'express')
+                    activitiesErrorHandler();
+                
+            });
 
     }
 
@@ -527,8 +708,7 @@ const addPaymentMethodBoxListener = payment.addEventListener('change', (e) => se
 
 const addExpirationMonthListener = expirationMonth.addEventListener('change', () => {
     
-    errorHandler('#exp-month-hint', isExpirationMonthValid, setExpirationMonthError);
-    errorHandler('#exp-date-hint', isExpirationDateValid, setExpirationDateError);
+    expirationDateErrorHandler('#exp-month-hint', isExpirationMonthValid, setExpirationMonthError);
 
 });
 
@@ -536,8 +716,7 @@ const addExpirationMonthListener = expirationMonth.addEventListener('change', ()
 
 const addExpirationYearListener = expirationYear.addEventListener('change', () => {
     
-    errorHandler('#exp-year-hint', isExpirationYearValid, setExpirationYearError);
-    errorHandler('#exp-date-hint', isExpirationDateValid, setExpirationDateError);
+    expirationDateErrorHandler('#exp-year-hint', isExpirationYearValid, setExpirationYearError);
 
 });
 
@@ -545,15 +724,43 @@ const addExpirationYearListener = expirationYear.addEventListener('change', () =
 
 const addFormListener = form.addEventListener('submit', (e) => {
 
+    // preventSubmission
+    // This Function Prevent Form Submission And Scrolls The Page To The Top. This Way The User Can Fix The Errors From Top To Bottom.
+
+    const preventSubmission = () => {
+
+        e.preventDefault();
+        scrollTo(0, 0);
+
+    }
+
     // handleInvalidInformation
 
     const handleInvalidInformation = (id, setError) => {
 
         const isValid = false;
-
-        e.preventDefault();
+        preventSubmission();
         errorHandler(id, isValid, setError);
 
+    }
+
+    // handleInvalidActivities
+
+    const handleInvalidActivities = () => {
+
+        preventSubmission();
+        activitiesErrorHandler();
+
+    }
+    
+    // handleInvalidExpirationDate
+
+    const handleInvalidExpirationDate = (id, setError) => {
+
+        const isValid = false;
+        preventSubmission();
+        expirationDateErrorHandler(id, isValid, setError);
+        
     }
 
     // Look For Invalid Information. If Such Information Exists - Handle It.
@@ -561,30 +768,30 @@ const addFormListener = form.addEventListener('submit', (e) => {
     if (!(isNameValid()))
         handleInvalidInformation('#name-hint', setNameError);
 
-    else if (!(isEmailValid()))
+    if (!(isEmailValid()))
         handleInvalidInformation('#email-hint', setEmailError);
     
-    else if (!(isActivityChecked()))
-        handleInvalidInformation('#activities-hint', setActivityError);
-    
-    else if (selectedPaymentMethod === 'credit-card')
+    if (!(isActivityChecked()))
+        handleInvalidActivities();
+        
+    if (selectedPaymentMethod === 'credit-card')
 
         if (!(isExpirationMonthValid()))
-            handleInvalidInformation('#exp-month-hint', setExpirationMonthError);
+            handleInvalidExpirationDate('#exp-month-hint', setExpirationMonthError);
 
-        else if (!(isExpirationYearValid()))
-            handleInvalidInformation('#exp-year-hint', setExpirationYearError);
+        if (!(isExpirationYearValid()))
+            handleInvalidExpirationDate('#exp-year-hint', setExpirationYearError);
             
-        else if (!(isExpirationDateValid()))
-            handleInvalidInformation('#exp-date-hint', setExpirationDateError);
+        if (!(isExpirationDateValid()))
+            handleInvalidExpirationDate('#exp-date-hint', setExpirationDateFeedback);
 
-        else if (!(isCreditCardNumberValid()))
+        if (!(isCreditCardNumberValid()))
             handleInvalidInformation('#cc-hint', setCardNumberError);
 
-        else if (!(isZipCodeValid()))
+        if (!(isZipCodeValid()))
             handleInvalidInformation('#zip-hint', setZipCodeError);
             
-        else if (!(isCvvValid()))
+        if (!(isCvvValid()))
             handleInvalidInformation('#cvv-hint', setCvvError); 
     
 });

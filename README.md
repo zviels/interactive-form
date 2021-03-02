@@ -34,7 +34,12 @@ I used only JavaScript to write this project.
 - Added conditional error messages to most required fields.
 - Made the "Expiration Month" and "Expiration Year" fields required.
 - Made the error messages appear when a user tries to submit the form with invalid or incomplete information.
-- Added an obvious 'focus' state when tabbing through the activities. I used the "focus" CSS class for this.
+- Added an obvious 'focus' state when tabbing through the activities. I used the 'focus' CSS class for this.
+
+## 02/03/2021
+
+- Improved accessibility.
+- On form submission, if the form contains invalid or incomplete information - the user will be taken to the top of the page. This way he will be able to fix all errors from top to bottom.
 
 ## Real Time Validation & Conditional Error Messages
 
@@ -60,7 +65,7 @@ This is done by using the "mouseleave" event type.
 
 ### The Credit Card Section
 
-- As mentioned above, I decided to require from the user to fill the expiration date. Error messages will appear if the user tries to submit the form without this information. **Important:** Those error messages will appear only if the user filled correctly all the fields that are above this section. If this is not the case, other error messages may show up.
+- As mentioned above, I decided to require from the user to fill the expiration date. Error messages will appear if the user tries to submit the form without this information.
 - The expiration date also must be at least one month later than today. An error message will appear if this is not the case, when the user chooses the expiration month and year.
 - None of the text fields (card number, zip code, CVV) can be empty. An error message will appear in this case.
 - An error message will appear in case the credit card number does not include 13-16 digits.
