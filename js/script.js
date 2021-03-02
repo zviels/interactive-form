@@ -774,7 +774,7 @@ const addFormListener = form.addEventListener('submit', (e) => {
     if (!(isActivityChecked()))
         handleInvalidActivities();
         
-    if (selectedPaymentMethod === 'credit-card')
+    if (selectedPaymentMethod === 'credit-card') {
 
         if (!(isExpirationMonthValid()))
             handleInvalidExpirationDate('#exp-month-hint', setExpirationMonthError);
@@ -793,6 +793,8 @@ const addFormListener = form.addEventListener('submit', (e) => {
             
         if (!(isCvvValid()))
             handleInvalidInformation('#cvv-hint', setCvvError); 
+
+    }
     
 });
 
